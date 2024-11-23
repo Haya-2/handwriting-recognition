@@ -3,7 +3,6 @@ from tensorflow.keras import layers, models
 from tensorflow.keras.datasets import mnist
 import numpy as np
 import matplotlib.pyplot as plt
-from PIL import Image
 
 # Load the MNIST dataset
 (x_train, y_train), (x_test, y_test) = mnist.load_data()
@@ -48,13 +47,6 @@ def predict_single_image(image):
     predicted_class = np.argmax(prediction)
     return predicted_class
 
-# Function to load and preprocess an image
-def load_and_preprocess_image(image_path):
-    img = Image.open(image_path).convert('L')  # Convert to grayscale if needed
-    img = img.resize((28, 28))  # Resize to 28x28 pixels
-    img = np.array(img)  # Convert to a numpy array
-    img = img / 255.0
-    return img.reshape(28, 28, 1)
 
 # Function to test images from the MNIST dataset
 def test_mnist_images():
