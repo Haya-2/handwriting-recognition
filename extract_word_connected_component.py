@@ -45,21 +45,14 @@ def extract_words_from_connected_components(image, output_folder):
     num_labels, labels, stats, _ = cv2.connectedComponentsWithStats(image, connectivity=8)
 
     bounding_boxes = []
-    word_count = 0
 
     for i in range(1, num_labels):  # Skip the background component (label 0)
         x, y, w, h, area = stats[i]
 
         # Ignore small components that are likely noise
         if w > 30 and h > 20:  # Thresholds can be adjusted based on the expected text size
-            word_count += 1
             bounding_boxes.append((x, y, w, h))
-
-            # Extract and save the word image
-            margin = 5
-            word_image = image[max(0, y - margin):y + h + margin, max(0, x - margin):x + w + margin]
-            cv2.imwrite(os.path.join(output_folder, f"word_{word_count}.png"), word_image)
-
+            
     return bounding_boxes
 
 def draw_bounding_boxes(original_image_path, bounding_boxes, output_path, scale_factors):
@@ -72,7 +65,20 @@ def draw_bounding_boxes(original_image_path, bounding_boxes, output_path, scale_
         raise ValueError(f"Cannot load original image: {original_image_path}")
 
     scale_x, scale_y = scale_factors
-
+    word_count = 0
+    
+    for (x, y, w, h) in bounding_boxes:
+        # Scale bounding box coordinates back to match original image size
+        x = int(x / scale_x)
+        y = int(y / scale_y)
+        w = int(w / scale_x)
+        h = int(h / scale_y)
+        
+        word_count += 1
+        margin = 5
+        word_image = original_image[max(0, y - margin):y + h + margin, max(0, x - margin):x + w + margin]
+        cv2.imwrite(os.path.join(output_folder, f"word_{word_count}.png"), word_image)
+    
     for (x, y, w, h) in bounding_boxes:
         # Scale bounding box coordinates back to match original image size
         x = int(x / scale_x)
@@ -85,7 +91,7 @@ def draw_bounding_boxes(original_image_path, bounding_boxes, output_path, scale_
 
 if __name__ == "__main__":
     # File paths
-    input_image_path = "hwr_example.jpg"
+    input_image_path = "example.jpg"
     output_folder = "image"
     output_image_path = "annotated_image.jpg"
 
