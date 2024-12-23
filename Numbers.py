@@ -14,7 +14,7 @@ from sklearn.metrics import confusion_matrix, classification_report
 
 
 # Paths for dataset
-DATA_DIR = "./data"
+DATA_DIR = "./data_1"
 TRAIN_DIR = os.path.join(DATA_DIR, "train")
 TEST_DIR = os.path.join(DATA_DIR, "test")
 
